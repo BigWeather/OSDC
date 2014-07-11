@@ -305,22 +305,14 @@ namespace OSDC
 
                     tile = _graphics[OSDC.Instance.dictIdentifierByMapCharacter[' ']];
                     //spriteBatch.Draw(OSDC.Instance.getTexture(tile), new Rectangle((int)(x * _worldCoordinatesPerTile.X), (int)(y * _worldCoordinatesPerTile.Y), (int)_worldCoordinatesPerTile.X, (int)_worldCoordinatesPerTile.Y), tile.getCurrentFrame(gameTime, gameState).bounds, Color.White);
-#if OLD_TEXTURE
-                    spriteBatch.Draw(OSDC.Instance.getTexture(tile), new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), tile.getCurrentFrame(gameTime, gameState).bounds, Color.White);
-#else
                     tile.Draw(gameTime, gameState, spriteBatch, new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y));
-#endif
                     if (cTile == ' ')
                         continue;
                     tile = _graphics[OSDC.Instance.dictIdentifierByMapCharacter[cTile]];
                     if (tile != null)
                     {
                         //spriteBatch.Draw(OSDC.Instance.getTexture(tile), new Rectangle((int)(x * _worldCoordinatesPerTile.X), (int)(y * _worldCoordinatesPerTile.Y), (int)_worldCoordinatesPerTile.X, (int)_worldCoordinatesPerTile.Y), tile.getCurrentFrame(gameTime, gameState).bounds, Color.White);
-#if OLD_TEXTURE
-                        spriteBatch.Draw(OSDC.Instance.getTexture(tile), new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), tile.getCurrentFrame(gameTime, gameState).bounds, Color.White);
-#else
                         tile.Draw(gameTime, gameState, spriteBatch, new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y));
-#endif
                     }
                 }
 
@@ -332,11 +324,7 @@ namespace OSDC
                     continue;
 
                 foreach (Vector2 v3Path in mob.path)
-#if OLD_TEXTURE
-                    spriteBatch.Draw(OSDC.Instance.tx2dSmallSquare, new Rectangle((int)((v3Path.X * _worldCoordinatesPerTile.X) + (_worldCoordinatesPerTile.X / 4.0f)), (int)((v3Path.Y * _worldCoordinatesPerTile.Y) + (_worldCoordinatesPerTile.Y / 4.0f)), (int)(_worldCoordinatesPerTile.X / 2.0f), (int)(_worldCoordinatesPerTile.Y / 2.0f)), Color.Red);
-#else
                     gSmallSquare.Draw(gameTime, gameState, spriteBatch, new Rectangle((int)((v3Path.X * _worldCoordinatesPerTile.X) + (_worldCoordinatesPerTile.X / 4.0f)), (int)((v3Path.Y * _worldCoordinatesPerTile.Y) + (_worldCoordinatesPerTile.Y / 4.0f)), (int)(_worldCoordinatesPerTile.X / 2.0f), (int)(_worldCoordinatesPerTile.Y / 2.0f)), Color.Red);
-#endif
                 }
 
 #if true
@@ -352,14 +340,7 @@ namespace OSDC
 
                 Vector2 v3Mob = mob.positionWorld;
 
-#if OLD_TEXTURE
-                spriteBatch.Draw(OSDC.Instance.getTexture(tile),
-                    new Rectangle((int)v3Mob.X, (int)v3Mob.Y, (int)_worldCoordinatesPerTile.X, (int)_worldCoordinatesPerTile.Y),
-                    bounds,
-                    Color.White, (float)mob.facing, origin, SpriteEffects.None, 0);
-#else
                 tile.Draw(gameTime, gameState, spriteBatch, new Rectangle((int)v3Mob.X, (int)v3Mob.Y, (int)_worldCoordinatesPerTile.X, (int)_worldCoordinatesPerTile.Y), Color.White, (float)mob.facing, origin, 0);
-#endif
                 //spriteBatch.Draw(OSDC.Instance.getTexture(tile),
                 //    new Rectangle((int)v3Mob.X, (int)v3Mob.Y, (int)_worldCoordinatesPerTile, (int)_worldCoordinatesPerTile),
                 //    bounds,

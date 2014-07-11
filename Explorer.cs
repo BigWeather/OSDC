@@ -174,13 +174,10 @@ namespace IntoTheNewWorld
                     WindowEffect effect = new WindowEffect();
                     effect.graphic = IntoTheNewWorld.Instance.dictGraphics["discovery"];
                     effect.msDuration = 1000;
-#if OLD_TEXTURE
-                    effect.texture = IntoTheNewWorld.Instance.getTexture(effect.graphic);
-#endif
                     effect.v2Start = IntoTheNewWorld.Instance.mapWindow.center;
                     effect.v2End = new Vector2(IntoTheNewWorld.Instance.mapWindow.bounds.Width, 0);
 
-                    IntoTheNewWorld.Instance.mapWindow.effects.Add(effect);
+                    //IntoTheNewWorld.Instance.mapWindow.effects.Add(effect);
                 }
 
                 if (mnc != newMapNode)
@@ -244,14 +241,10 @@ namespace IntoTheNewWorld
                         commands.Add(new Command("command_europe", Command.Slot.A, this));
 #endif
                 }
-#if !SIMPLE
                 else
                     commands.Add(new Command("command_cache", Command.Slot.A, this));
-#endif
 
-#if !SIMPLE
                 commands.Add(new Command("command_journal", Command.Slot.Y, this));
-#endif
             }
             return commands;
         }

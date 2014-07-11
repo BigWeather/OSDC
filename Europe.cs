@@ -14,9 +14,7 @@ namespace IntoTheNewWorld
         public Europe(string text, Vector2 pos)
             : base(text, pos)
         {
-#if !SIMPLE
             //this.sourceActions.Add(IntoTheNewWorld.Instance.actionsByIdentifier["spawn_explorer"]);
-#endif
 
             this.targetActions.Add(IntoTheNewWorld.Instance.actionsByIdentifier["return_to_europe"]);
 

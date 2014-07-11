@@ -52,18 +52,6 @@ namespace IntoTheNewWorld
             public Graphic gTail { get; private set; }
             public Graphic gBody { get; private set; }
             public Graphic gHead { get; private set; }
-#if OLD_TEXTURE
-            public Texture2D t2d 
-            {
-                get
-                {
-                    if (_t2d == null)
-                        _t2d = IntoTheNewWorld.Instance.getTexture(gBody);
-                    return _t2d;
-                }
-            }
-            private Texture2D _t2d = null;
-#endif
 
             public Arrow(Graphic gTail, Graphic gBody, Graphic gHead)
             {
@@ -658,11 +646,7 @@ namespace IntoTheNewWorld
             {
                 g = IntoTheNewWorld.Instance.dictGraphics["trade_background"];
                 //spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(g), new Rectangle(0, 0, this.bounds.Width, this.bounds.Height), g.getCurrentFrame(gameTime, gameState).bounds, Color.White);
-#if OLD_TEXTURE
-                spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(gPixel), new Rectangle(0, 0, this.bounds.Width, this.bounds.Height), fPixel.bounds, Color.Tan);
-#else
-                gPixel.Draw(gameTime, gameState, spriteBatch, new Rectangle(0, 0, this.bounds.Width, this.bounds.Height), Color.Tan);
-#endif
+                gPixel.Draw(fPixel, spriteBatch, new Rectangle(0, 0, this.bounds.Width, this.bounds.Height), Color.Tan);
             }
 
             // TODO: Combine items and arrows drawing, cache Graphics, etc.
@@ -699,87 +683,39 @@ namespace IntoTheNewWorld
                 // Draw the hover background.
                 _tradeItemHotspots[i].bounds = new Rectangle(leftTraderX, currentY, (rightTraderX + f.bounds.Width) - leftTraderX, f.bounds.Height);
                 if (this.pointerOverHotspot == _tradeItemHotspots[i])
-#if OLD_TEXTURE
-                    spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(gPixel), this.pointerOverHotspot.bounds, fPixel.bounds, Color.Beige);
-#else
-                    gPixel.Draw(gameTime, gameState, spriteBatch, this.pointerOverHotspot.bounds, Color.Beige);
-#endif
-
-#if OLD_TEXTURE
-                Texture2D t2dTradeItem = IntoTheNewWorld.Instance.getTexture(g);
-#endif
-
-                Rectangle bounds;
+                    gPixel.Draw(fPixel, spriteBatch, this.pointerOverHotspot.bounds, Color.Beige);
 
                 // Draw the desired green up arrow.
-#if OLD_TEXTURE
                 if (_desired[i])
-                    spriteBatch.Draw(t2dTradeItem, new Rectangle(leftTraderX - fUpGreen.bounds.Width, currentY + ((f.bounds.Height - fUpGreen.bounds.Height) / 2), fUpGreen.bounds.Width, fUpGreen.bounds.Height), fUpGreen.bounds, Color.White);
+                    gUpGreen.Draw(fUpGreen, spriteBatch, new Point(leftTraderX - fUpGreen.bounds.Width, currentY + ((f.bounds.Height - fUpGreen.bounds.Height) / 2)));
                 else if (_undesired[i])
-                    spriteBatch.Draw(t2dTradeItem, new Rectangle(leftTraderX - fDownRed.bounds.Width, currentY + ((f.bounds.Height - fDownRed.bounds.Height) / 2), fDownRed.bounds.Width, fDownRed.bounds.Height), fDownRed.bounds, Color.White);
-#else
-                if (_desired[i])
-                    gUpGreen.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX - fUpGreen.bounds.Width, currentY + ((f.bounds.Height - fUpGreen.bounds.Height) / 2)));
-                else if (_undesired[i])
-                    gDownRed.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX - fDownRed.bounds.Width, currentY + ((f.bounds.Height - fDownRed.bounds.Height) / 2)));
-#endif
+                    gDownRed.Draw(fDownRed, spriteBatch, new Point(leftTraderX - fDownRed.bounds.Width, currentY + ((f.bounds.Height - fDownRed.bounds.Height) / 2)));
 
                 // Draw left.
-#if OLD_TEXTURE
-                bounds = new Rectangle(leftTraderX, currentY, f.bounds.Width, f.bounds.Height);
-                spriteBatch.Draw(t2dTradeItem, bounds, f.bounds, Color.White);
+                g.Draw(f, spriteBatch, new Point(leftTraderX, currentY));
                 if (isAIPartnerActive())
                 {
                     if (_lockedLeft[i] == LockedState.Locked)
-                        spriteBatch.Draw(t2dTradeItem, new Rectangle(leftTraderX, currentY, fLocked.bounds.Width, fLocked.bounds.Height), fLocked.bounds, Color.White);
+                        gLocked.Draw(fLocked, spriteBatch, new Point(leftTraderX, currentY));
                     else if (_lockedLeft[i] == LockedState.Unlocked)
-                        spriteBatch.Draw(t2dTradeItem, new Rectangle(leftTraderX, currentY, fUnlocked.bounds.Width, fUnlocked.bounds.Height), fUnlocked.bounds, Color.White);
+                        gUnlocked.Draw(fUnlocked, spriteBatch, new Point(leftTraderX, currentY));
                     if (_desired[i])
-                        spriteBatch.Draw(t2dTradeItem, new Rectangle(leftTraderX + f.bounds.Width - fDesired.bounds.Width, currentY, fDesired.bounds.Width, fDesired.bounds.Height), fDesired.bounds, Color.White);
+                        gDesired.Draw(fDesired, spriteBatch, new Point(leftTraderX + f.bounds.Width - fDesired.bounds.Width, currentY));
                 }
-#else
-                g.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX, currentY));
-                if (isAIPartnerActive())
-                {
-                    if (_lockedLeft[i] == LockedState.Locked)
-                        gLocked.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX, currentY));
-                    else if (_lockedLeft[i] == LockedState.Unlocked)
-                        gUnlocked.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX, currentY));
-                    if (_desired[i])
-                        gDesired.Draw(gameTime, gameState, spriteBatch, new Point(leftTraderX + f.bounds.Width - fDesired.bounds.Width, currentY));
-                }
-#endif
 
                 // Draw right.
-#if OLD_TEXTURE
-                bounds = new Rectangle(rightTraderX, currentY, f.bounds.Width, f.bounds.Height);
-                spriteBatch.Draw(t2dTradeItem, bounds, f.bounds, Color.White);
+                g.Draw(f, spriteBatch, new Point(rightTraderX, currentY));
                 if (isAIPartnerActive())
                 {
                     if (_lockedRight[i] == LockedState.Locked)
-                        spriteBatch.Draw(t2dTradeItem, new Rectangle(rightTraderX, currentY, fLocked.bounds.Width, fLocked.bounds.Height), fLocked.bounds, Color.White);
+                        gLocked.Draw(fLocked, spriteBatch, new Point(rightTraderX, currentY));
                     else if (_lockedRight[i] == LockedState.Unlocked)
-                        spriteBatch.Draw(t2dTradeItem, new Rectangle(rightTraderX, currentY, fUnlocked.bounds.Width, fUnlocked.bounds.Height), fUnlocked.bounds, Color.White);
+                        gUnlocked.Draw(fUnlocked, spriteBatch, new Point(rightTraderX, currentY));
                 }
-#else
-                g.Draw(gameTime, gameState, spriteBatch, new Point(rightTraderX, currentY));
-                if (isAIPartnerActive())
-                {
-                    if (_lockedRight[i] == LockedState.Locked)
-                        gLocked.Draw(gameTime, gameState, spriteBatch, new Point(rightTraderX, currentY));
-                    else if (_lockedRight[i] == LockedState.Unlocked)
-                        gUnlocked.Draw(gameTime, gameState, spriteBatch, new Point(rightTraderX, currentY));
-                }
-#endif
 
                 // Draw middle.
-#if OLD_TEXTURE
                 if (_offsets[i] != 0)
-                    spriteBatch.Draw(t2dTradeItem, new Rectangle(middleTraderX, currentY, f.bounds.Width, f.bounds.Height), f.bounds, Color.White);
-#else
-                if (_offsets[i] != 0)
-                    g.Draw(gameTime, gameState, spriteBatch, new Point(middleTraderX, currentY));
-#endif
+                    g.Draw(f, spriteBatch, new Point(middleTraderX, currentY));
 
                 int textY = currentY + f.bounds.Height;
 
@@ -936,9 +872,6 @@ namespace IntoTheNewWorld
             Frame fTail = arrow.gTail.getCurrentFrame(gameTime, gameState);
             Frame fBody = arrow.gBody.getCurrentFrame(gameTime, gameState);
             Frame fHead = arrow.gHead.getCurrentFrame(gameTime, gameState);
-#if OLD_TEXTURE
-            Texture2D t2dArrow = arrow.t2d;
-#endif
 
             // Determine the available width of the arrow -- this is the space between the head and tail, i.e. the body.
             // This width will scale with the amount of the item being traded (relative to the total amount available to trade).
@@ -971,15 +904,9 @@ namespace IntoTheNewWorld
             }
 
             // Draw tail, body and head.
-#if OLD_TEXTURE
-            spriteBatch.Draw(t2dArrow, new Rectangle(tailX, arrowY, fTail.bounds.Width, fTail.bounds.Height), fTail.bounds, Color.White);
-            spriteBatch.Draw(t2dArrow, new Rectangle(bodyX, arrowY, arrowWidth, fBody.bounds.Height), fBody.bounds, Color.White);
-            spriteBatch.Draw(t2dArrow, new Rectangle(headX, arrowY, fHead.bounds.Width, fHead.bounds.Height), fHead.bounds, Color.White);
-#else
-            arrow.gTail.Draw(gameTime, gameState, spriteBatch, new Point(tailX, arrowY));
-            arrow.gBody.Draw(gameTime, gameState, spriteBatch, new Rectangle(bodyX, arrowY, arrowWidth, fBody.bounds.Height));
-            arrow.gHead.Draw(gameTime, gameState, spriteBatch, new Point(headX, arrowY));
-#endif
+            arrow.gTail.Draw(fTail, spriteBatch, new Point(tailX, arrowY));
+            arrow.gBody.Draw(fBody, spriteBatch, new Rectangle(bodyX, arrowY, arrowWidth, fBody.bounds.Height));
+            arrow.gHead.Draw(fHead, spriteBatch, new Point(headX, arrowY));
         }
 
         private bool isAIPartner()

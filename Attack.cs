@@ -483,9 +483,7 @@ namespace IntoTheNewWorld
 
             // Cash in discovery for fame
             source.state.adjustValue("recognition", source.state.getValue<int>("discovery"));
-#if !SIMPLE
             source.state.setValue("discovery", 0);
-#endif
         }
     }
 

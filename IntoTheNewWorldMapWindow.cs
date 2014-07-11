@@ -210,11 +210,6 @@ namespace IntoTheNewWorld
 
                 Graphic gParchment = IntoTheNewWorld.Instance.dictGraphics["parchment"];
                 Frame fParchment = gParchment.getCurrentFrame(gameTime, gameState);
-#if OLD_TEXTURE
-                Texture2D t2dParchment = IntoTheNewWorld.Instance.getTexture(gParchment);
-#else
-                //TextureManager.Instance.setTexture(gParchment.texture, IntoTheNewWorld.Instance.getTexture(gParchment));
-#endif
 
 #if false
                 Vector2 v2ULW = screenToWorld(Vector2.Zero);
@@ -252,11 +247,7 @@ namespace IntoTheNewWorld
                 for (int x = (int)v2FramePositionS.X; x < IntoTheNewWorld.Instance.graphics.PreferredBackBufferWidth; x += fParchment.bounds.Width)
                     for (int y = (int)v2FramePositionS.Y; y < IntoTheNewWorld.Instance.graphics.PreferredBackBufferHeight; y += fParchment.bounds.Height)
                     {
-#if OLD_TEXTURE
-                        spriteBatch.Draw(t2dParchment, new Rectangle(x, y, fParchment.bounds.Width, fParchment.bounds.Height), fParchment.bounds, Color.White);
-#else
-                        gParchment.Draw(gameTime, gameState, spriteBatch, new Point(x, y));
-#endif
+                        gParchment.Draw(fParchment, spriteBatch, new Point(x, y));
                     }
 
                 spriteBatch.End();
@@ -264,13 +255,6 @@ namespace IntoTheNewWorld
                 IntoTheNewWorld.Instance.GraphicsDevice.Clear(cLand);
 #endif
             }
-
-            // Figure out the UL and LR row and column we need to draw.
-            Vector2 v2WUL = screenToWorld(Vector2.Zero);
-            Vector2 v2WLR = screenToWorld(new Vector2(IntoTheNewWorld.Instance.graphics.PreferredBackBufferWidth, IntoTheNewWorld.Instance.graphics.PreferredBackBufferHeight));
-
-            Vector2 v2GUL = this.map.worldToGrid(v2WUL, true);
-            Vector2 v2GLR = this.map.worldToGrid(v2WLR, true);
 
             Map.MapNode mnPlayer = this.map.getMapNode(IntoTheNewWorld.Instance.players[0].positionWorld);
             List<Map.MapNode> mnsVisible = this.map.getVisibleNodes(mnPlayer, this.map.getTile(mnPlayer).terrain.visibilityRange);
@@ -285,30 +269,56 @@ namespace IntoTheNewWorld
 
             Point tileExtents = map.getTileExtents();
 
-            // NOTE: When (if) we support rotation this will need to change.
             // TODO: Move to MapWindow?
-            int startRow = Math.Max(0, (int)v2GUL.Y - 1);
-            int endRow = Math.Min(this.map.height, (int)v2GLR.Y + 1);
+            // Figure out the UL and LR row and column we need to draw.
+            Vector2 v2WUL = screenToWorld(Vector2.Zero);
+            Vector2 v2WLR = screenToWorld(new Vector2(IntoTheNewWorld.Instance.graphics.PreferredBackBufferWidth, IntoTheNewWorld.Instance.graphics.PreferredBackBufferHeight));
+            Vector2 v2WLL = screenToWorld(new Vector2(0, IntoTheNewWorld.Instance.graphics.PreferredBackBufferHeight));
+            Vector2 v2WUR = screenToWorld(new Vector2(IntoTheNewWorld.Instance.graphics.PreferredBackBufferWidth, 0));
+
+            Vector2 v2GUL = this.map.worldToGrid(v2WUL, true);
+            Vector2 v2GLR = this.map.worldToGrid(v2WLR, true);
+            Vector2 v2GLL = this.map.worldToGrid(v2WLL, true);
+            Vector2 v2GUR = this.map.worldToGrid(v2WUR, true);
+
+            int startRow, endRow, startColumn, endColumn;
+#if false
+            // NOTE: When (if) we support rotation this will need to change.
+            startRow = Math.Max(0, (int)v2GUL.Y - 1);
+            endRow = Math.Min(this.map.height, (int)v2GLR.Y + 1);
             if (startRow > endRow)
             {
                 int temp = startRow;
                 startRow = endRow;
                 endRow = temp;
             }
-            int startColumn = Math.Max(0, (int)v2GUL.X - 1);
-            int endColumn = Math.Min(this.map.width, (int)v2GLR.X + 1);
+            startColumn = Math.Max(0, (int)v2GUL.X - 1);
+            endColumn = Math.Min(this.map.width, (int)v2GLR.X + 1);
             if (startColumn > endColumn)
             {
                 int temp = startColumn;
                 startColumn = endColumn;
                 endColumn = temp;
             }
+#else
+            List<int> rows = new List<int>(4);
+            rows.Add((int)v2GUL.Y);
+            rows.Add((int)v2GLR.Y);
+            rows.Add((int)v2GLL.Y);
+            rows.Add((int)v2GUR.Y);
+            rows.Sort();
+            startRow = Math.Max(0, rows[0] - 1);
+            endRow = Math.Min(this.map.height, rows[3] + 1);
 
-            // TODO:AA: Figure out correctly.
-            startRow = 0;
-            endRow = this.map.height;
-            startColumn = 0;
-            endColumn = this.map.width;
+            List<int> columns = new List<int>(4);
+            columns.Add((int)v2GUL.X);
+            columns.Add((int)v2GLR.X);
+            columns.Add((int)v2GLL.X);
+            columns.Add((int)v2GUR.X);
+            columns.Sort();
+            startColumn = Math.Max(0, columns[0] - 1);
+            endColumn = Math.Min(this.map.width, columns[3] + 1);
+#endif
 
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, null, null, null, null, mxTWorldToScreen);
 
@@ -382,11 +392,7 @@ namespace IntoTheNewWorld
                         else if (terrain.majorType == Terrain.TerrainMajorType.Swamp)
                             cBase = Color.YellowGreen;
 
-#if OLD_TEXTURE
-                        spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(graphic), new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), graphic.getCurrentFrame(gameTime, gameState).bounds, new Color(cBase.ToVector3() * color.ToVector3()), 0.0f, Vector2.Zero, SpriteEffects.None, layer);
-#else
                         graphic.Draw(gameTime, gameState, spriteBatch, new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), new Color(cBase.ToVector3() * color.ToVector3()), 0.0f, Vector2.Zero, layer);
-#endif
                         //graphic.Draw(gameTime, gameState, spriteBatch, IntoTheNewWorld.Instance, new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y));
                     }
 
@@ -401,12 +407,8 @@ namespace IntoTheNewWorld
                         else
                             sideLen = 75; // TODO: Remove hardcoded
 
-#if OLD_TEXTURE
-                        drawBorder(row, column, IntoTheNewWorld.Instance.tx2dSmallSquare, new Frame(new Rectangle(0, 0, 4, sideLen), new Point(0, 0), 1), Color.Black, Side.All, spriteBatch, layer);
-#else
                         Graphic gSmallSquare = IntoTheNewWorld.Instance.dictGraphics["small_square"];
                         drawBorder(row, column, gSmallSquare, new Frame(new Rectangle(0, 0, 4, sideLen), new Point(0, 0), 1), Color.Black, Side.All, spriteBatch, layer, gameTime, gameState);
-#endif
                     }
 
                     // Draw the terrain on top of the base                    
@@ -445,11 +447,7 @@ namespace IntoTheNewWorld
                             Rectangle rectTerrain = new Rectangle((int)(tileCXY.X - (v2WFrameBounds.X / 2)), (int)(tileCXY.Y - (v2WFrameBounds.Y / 2)), (int)v2WFrameBounds.X, (int)v2WFrameBounds.Y);
                             if (frameTerrain.anchor.X != 0) // TODO:AA: What's the point of this?
                                 rectTerrain = new Rectangle((int)(tileCXY.X - (tileExtents.X / 2)), (int)(tileCXY.Y - (tileExtents.Y / 2)), (int)v2WFrameBounds.X, (int)v2WFrameBounds.Y);
-#if OLD_TEXTURE
-                            spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(graphic), rectTerrain, frameTerrain.bounds, color, 0.0f, new Vector2(frameTerrain.anchor.X, frameTerrain.anchor.Y), SpriteEffects.None, layer);
-#else
-                            graphic.Draw(gameTime, gameState, spriteBatch, rectTerrain, color, 0.0f, new Vector2(frameTerrain.anchor.X, frameTerrain.anchor.Y), layer);
-#endif
+                            graphic.Draw(frameTerrain, spriteBatch, rectTerrain, color, 0.0f, new Vector2(frameTerrain.anchor.X, frameTerrain.anchor.Y), layer);
                         }
                     }
 
@@ -474,16 +472,9 @@ namespace IntoTheNewWorld
                                 gameState.setValue("visible", 1);
 
                             Graphic gBorder = tile.borders[side];
-#if OLD_TEXTURE
-                            Texture2D t2dBorder = IntoTheNewWorld.Instance.getTexture(gBorder);
-#endif
                             Frame frmBorder = gBorder.getCurrentFrame(gameTime, gameState);
 
-#if OLD_TEXTURE
-                            drawBorder(row, column, t2dBorder, frmBorder, color, side, spriteBatch, layer);
-#else
                             drawBorder(row, column, gBorder, frmBorder, color, side, spriteBatch, layer, gameTime, gameState);
-#endif
                         }
 
                         if (restoreVisible)
@@ -627,11 +618,7 @@ namespace IntoTheNewWorld
                 if ((commands != null) && (commands.Count > 0))
                 {
                     Graphic gCommandBG = IntoTheNewWorld.Instance.dictGraphics["command"];
-#if OLD_TEXTURE
-                    Texture2D t2dCommandBG = IntoTheNewWorld.Instance.getTexture(gCommandBG);
-#endif
                     Frame fCommandBG = gCommandBG.getCurrentFrame(gameTime, gameState);
-                    SpriteEffects spriteEffects = SpriteEffects.None;
                     Frame frame = fCommandBG;
 
                     foreach (Command command in commands)
@@ -655,11 +642,7 @@ namespace IntoTheNewWorld
 
                         // Draw the background.
                         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, mxTScaleOnly);
-#if OLD_TEXTURE
-                        spriteBatch.Draw(t2dCommandBG, new Rectangle((int)v2SCommandPos.X, (int)v2SCommandPos.Y, fCommandBG.bounds.Width, fCommandBG.bounds.Height), fCommandBG.bounds, color, 0.0f, new Vector2(frame.anchor.X, frame.anchor.Y), spriteEffects, 0.1f);
-#else
-                        gCommandBG.Draw(gameTime, gameState, spriteBatch, new Rectangle((int)v2SCommandPos.X, (int)v2SCommandPos.Y, fCommandBG.bounds.Width, fCommandBG.bounds.Height), color, 0.0f, new Vector2(frame.anchor.X, frame.anchor.Y), 0.1f);
-#endif
+                        gCommandBG.Draw(fCommandBG, spriteBatch, new Rectangle((int)v2SCommandPos.X, (int)v2SCommandPos.Y, fCommandBG.bounds.Width, fCommandBG.bounds.Height), color, 0.0f, new Vector2(frame.anchor.X, frame.anchor.Y), 0.1f);
                         spriteBatch.End();
 
                         // Draw the command.
@@ -704,23 +687,14 @@ namespace IntoTheNewWorld
             int itemXGutter = 20;
             int itemX = tsa.X + 10;
             int itemY = tsa.Y + 10;
-#if SIMPLE
-            string[] items = { "food", "gold" };
-#else
+            //string[] items = { "food", "gold" };
             string[] items = { "men", "food", "ships", "gold", "oldworld_goods", "newworld_goods", "horses", "weapons" };
-#endif
             int itemIdx = 0;
             foreach (string item in items)
             {
                 Graphic gItem = IntoTheNewWorld.Instance.dictGraphics["trade_" + item];
-#if OLD_TEXTURE
                 Frame fItem = gItem.getCurrentFrame(gameTime, gameState);
-                spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(gItem), new Rectangle(itemX, itemY, fItem.bounds.Width, fItem.bounds.Height), fItem.bounds, Color.White);
-#else
-                Frame fItem = gItem.getCurrentFrame(gameTime, gameState);
-                //TextureManager.Instance.setTexture(gItem.texture, IntoTheNewWorld.Instance.getTexture(gItem));
-                gItem.Draw(gameTime, gameState, spriteBatch, new Point(itemX, itemY));
-#endif
+                gItem.Draw(fItem, spriteBatch, new Point(itemX, itemY));
                 int itemQuantity = IntoTheNewWorld.Instance.players[0].state.getValue<int>(item);
                 string sItem = "" + itemQuantity;
                 if (item == "food")
@@ -740,11 +714,7 @@ namespace IntoTheNewWorld
 
             Graphic gDays = IntoTheNewWorld.Instance.dictGraphics["days"];
             Frame fDays = gDays.getCurrentFrame(gameTime, gameState);
-#if OLD_TEXTURE
-            spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(gDays), new Rectangle(tsa.X + (tsa.Width / 2) - (fDays.bounds.Width / 2), tsa.Y + 10, fDays.bounds.Width, fDays.bounds.Height), fDays.bounds, Color.White);
-#else
-            gDays.Draw(gameTime, gameState, spriteBatch, new Point(tsa.X + (tsa.Width / 2) - (fDays.bounds.Width / 2), tsa.Y + 10));
-#endif
+            gDays.Draw(fDays, spriteBatch, new Point(tsa.X + (tsa.Width / 2) - (fDays.bounds.Width / 2), tsa.Y + 10));
             string sDays = "" + IntoTheNewWorld.Instance.days;
             string sDate = "" + IntoTheNewWorld.Instance.date.ToString("d");
             Vector2 v2DaysSize = font.MeasureString(sDays);
@@ -756,11 +726,8 @@ namespace IntoTheNewWorld
             int iconXGutter = 20;
             int iconRightX = tsa.X + tsa.Width - 10;
 
-#if SIMPLE
-            string[] icons = { "discovery" };
-#else
+            //string[] icons = { "discovery" };
             string[] icons = { "recognition", "discovery", "relations" };
-#endif
 
             int iconLeftX = iconRightX;
             for (int i = 0; i < icons.Length; i++)
@@ -768,11 +735,7 @@ namespace IntoTheNewWorld
                 Graphic gIcon = IntoTheNewWorld.Instance.dictGraphics[icons[i]];
                 Frame fIcon = gIcon.getCurrentFrame(gameTime, gameState);
                 iconLeftX -= fIcon.bounds.Width;
-#if OLD_TEXTURE
-                spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(gIcon), new Rectangle(iconLeftX, iconY, fIcon.bounds.Width, fIcon.bounds.Height), fIcon.bounds, Color.White);
-#else
-                gIcon.Draw(gameTime, gameState, spriteBatch, new Point(iconLeftX, iconY));
-#endif
+                gIcon.Draw(fIcon, spriteBatch, new Point(iconLeftX, iconY));
 
                 int textCenter = iconLeftX + (fIcon.bounds.Width / 2);
                 string sIcon = "";
@@ -949,11 +912,7 @@ namespace IntoTheNewWorld
             return graphic;
         }
 
-#if OLD_TEXTURE
-        private void drawBorder(int row, int column, Texture2D texture, Frame frame, Color color, Side side, SpriteBatch spriteBatch, float layer)
-#else
         private void drawBorder(int row, int column, Graphic texture, Frame frame, Color color, Side side, SpriteBatch spriteBatch, float layer, GameTime gameTime, VariableBundle gameState)
-#endif
         {
             MapGrid<MapTile> map = this.map;
             bool useHexes = this.hexBased;
@@ -1010,11 +969,7 @@ namespace IntoTheNewWorld
                 // Calculate the origin of the rotation.  This is in TEXTURE coordinates.
                 Vector2 origin = new Vector2(-(float)radiusA + ((float)frame.bounds.Width / 2.0f), (float)frame.bounds.Height / 2.0f);
 
-#if OLD_TEXTURE
-                spriteBatch.Draw(texture, rectangleDest, frame.bounds, color, (float)radians, origin, SpriteEffects.None, layer);
-#else
-                texture.Draw(gameTime, gameState, spriteBatch, rectangleDest, color, (float)radians, origin, layer);
-#endif
+                texture.Draw(frame, spriteBatch, rectangleDest, color, (float)radians, origin, layer);
             }
         }
     }

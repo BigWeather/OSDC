@@ -402,15 +402,9 @@ namespace IntoTheNewWorld
             _windowDecorations.sideE = IntoTheNewWorld.Instance.dictGraphics["window_E"];
             _windowDecorations.sideS = IntoTheNewWorld.Instance.dictGraphics["window_S"];
             _windowDecorations.sideW = IntoTheNewWorld.Instance.dictGraphics["window_W"];
-#if OLD_TEXTURE
-            _windowDecorations.texture = IntoTheNewWorld.Instance.getTexture(_windowDecorations.cornerNW);
-#endif
 
             _windowBackground = new WindowBackground();
             _windowBackground.background = IntoTheNewWorld.Instance.dictGraphics["parchment"];
-#if OLD_TEXTURE
-            _windowBackground.texture = IntoTheNewWorld.Instance.getTexture(_windowBackground.background);
-#endif
             _windowBackground.style = WindowBackground.Style.Tiled;
         }
 
@@ -674,14 +668,11 @@ namespace IntoTheNewWorld
             // Put out an Explorer...
             float speed = IntoTheNewWorld.milesPerMillisecond * this.worldCoordinatesPerMile;
             explorers = new List<Explorer>();
-#if !SIMPLE
             //explorers.Add(new Explorer("Juan", _map.gridToWorld(getLandTile(tiles, this.rnd)), speed));
             //explorers.Add(new Explorer("John", _map.gridToWorld(getLandTile(tiles, this.rnd)), speed));
             //explorers.Add(new Explorer("Jean", _map.gridToWorld(getLandTile(tiles, this.rnd)), speed));
-#endif
 
             cities = new List<City>();
-#if !SIMPLE
             int numCities = 50;
             for (int i = 0; i < numCities; i++)
             {
@@ -696,7 +687,6 @@ namespace IntoTheNewWorld
                 MapTile mt = _map.getTile(v2GPos);
                 mt.addMapObject(city);
             }
-#endif
 
             this.caches = new List<IntoTheNewWorldCache>();
             this.parkedShips = new List<Ship>();
@@ -749,7 +739,7 @@ namespace IntoTheNewWorld
             mapWindow.allowRotation = true;
             mapWindow.scaleMin = 0.1f;
             mapWindow.scaleMax = 3.0f;
-            mapWindow.drawGrid = false;
+            mapWindow.drawGrid = true; // TODO:AA: Was false
             Show(mapWindow);
 
             mapWindow.showMessageBox("Welcome to Into the New World!\n\nSail forth and discover the New World!\nDiscover as much as possible and return\nto Europe to end the game, or die\nin the attempt...");
@@ -1328,7 +1318,6 @@ namespace IntoTheNewWorld
                     score += (native_like / 5);
                 }
 
-#if !SIMPLE
                 s += "The royal court is ";
                 if (gold < 500)
                     s += "very unhappy";
@@ -1342,12 +1331,10 @@ namespace IntoTheNewWorld
                     s += "ecstatic";
                 s += " with the\namount of gold (" + gold + ") you brought back with you.\n";
                 score += (gold / 100);
-#endif
 
                 s += "\n";
             }
 
-#if !SIMPLE
             string title = "";
             if (score < 40)
                 title = "novice";
@@ -1361,7 +1348,6 @@ namespace IntoTheNewWorld
                 title = "master";
 
             s += "Your score of " + score + " ranks you as a\n" + title + " explorer.";
-#endif
 
             return s;
         }

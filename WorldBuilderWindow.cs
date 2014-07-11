@@ -114,11 +114,7 @@ namespace IntoTheNewWorld
                     Color cBase = (tile <= _waterLevel) ? cOcean : cLand;
                     if (cBase == cOcean)
                         tile = 1.0f;
-#if OLD_TEXTURE
-                    spriteBatch.Draw(IntoTheNewWorld.Instance.getTexture(graphic), new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), graphic.getCurrentFrame(gameTime, gameState).bounds, new Color(cBase.ToVector3() * new Vector3(tile)));
-#else
                     graphic.Draw(gameTime, gameState, spriteBatch, new Rectangle(tileXY.X, tileXY.Y, tileExtents.X, tileExtents.Y), new Color(cBase.ToVector3() * new Vector3(tile)));
-#endif
                 }
 
             spriteBatch.End();
