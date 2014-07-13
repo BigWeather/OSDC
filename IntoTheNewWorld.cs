@@ -739,7 +739,7 @@ namespace IntoTheNewWorld
             mapWindow.allowRotation = true;
             mapWindow.scaleMin = 0.1f;
             mapWindow.scaleMax = 3.0f;
-            mapWindow.drawGrid = true; // TODO:AA: Was false
+            mapWindow.drawGrid = false;
             Show(mapWindow);
 
             mapWindow.showMessageBox("Welcome to Into the New World!\n\nSail forth and discover the New World!\nDiscover as much as possible and return\nto Europe to end the game, or die\nin the attempt...");

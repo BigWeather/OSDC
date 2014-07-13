@@ -19,6 +19,8 @@ namespace IntoTheNewWorld
         Dictionary<Command.Slot, Button> _dictCommandButtonsBySlot;
         Dictionary<Command.Slot, Command> _dictCommandsBySlot; // TODO: Build into a new CommandButton class?
 
+        SpriteFont _font = (SpriteFont)FontManager.Instance.getFont(IntoTheNewWorld.Instance.fontName);
+
         public IntoTheNewWorldMapWindow(MapGrid<MapTile> map, Rectangle bounds, Vector2 tileSizeA, Vector2 cameraPos)
             : base(map, bounds, tileSizeA, cameraPos, IntoTheNewWorld.Instance)
         {
@@ -188,7 +190,7 @@ namespace IntoTheNewWorld
         {
             base.Draw(gameTime, gameState, spriteBatch);
 
-            SpriteFont font = IntoTheNewWorld.Instance.miramonte;
+            SpriteFont font = _font;
 
             // Clear any hotspots from the last render.
             this.hotspots = new List<Hotspot>();
@@ -892,7 +894,7 @@ namespace IntoTheNewWorld
 
         public void showMessageBox(string text, EventHandler<PressEventArgs> OnOK)
         {
-            MessageBox messageBox = new MessageBox(text, IntoTheNewWorld.Instance.miramonte, this.center, IntoTheNewWorld.Instance, OnOK);
+            MessageBox messageBox = new MessageBox(text, _font, this.center, IntoTheNewWorld.Instance, OnOK);
             messageBox.background = IntoTheNewWorld.Instance.windowBackground;
             messageBox.decorations = IntoTheNewWorld.Instance.windowDecorations;
             IntoTheNewWorld.Instance.Show(messageBox);

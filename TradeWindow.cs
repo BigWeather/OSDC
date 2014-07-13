@@ -110,7 +110,7 @@ namespace IntoTheNewWorld
         private int _itemsYBuffer = 10;
 
         private int _textHeight;
-        private SpriteFont _font = IntoTheNewWorld.Instance.miramonte;
+        private SpriteFont _font = (SpriteFont)FontManager.Instance.getFont(IntoTheNewWorld.Instance.fontName);
 
         public TradeWindow(Vector2 v2Center, int width, VariableBundle leftTrader, VariableBundle rightTrader, TradingPartner partner, int unlocks, string leftTraderString, string rightTraderString) 
             : base(v2Center, IntoTheNewWorld.Instance) 

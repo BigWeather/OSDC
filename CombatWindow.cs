@@ -18,7 +18,7 @@ namespace IntoTheNewWorld
         public MapObject attacker { get; private set; }
         public MapObject defender { get; private set; }
 
-        private SpriteFont _font = IntoTheNewWorld.Instance.miramonte;
+        private SpriteFont _font = (SpriteFont)FontManager.Instance.getFont(IntoTheNewWorld.Instance.fontName);
 
         private string _text;
         private string _textRight;
@@ -79,7 +79,7 @@ namespace IntoTheNewWorld
 
         public void initializeButtons()
         {
-            _buttonFight = new Button(new Rectangle(0, 0, 0, 0), "Engage", IntoTheNewWorld.Instance.miramonte, Color.Green, true);
+            _buttonFight = new Button(new Rectangle(0, 0, 0, 0), "Engage", _font, Color.Green, true);
             _buttonFight.Press += new EventHandler<PressEventArgs>(_buttonFight_Press);
             this.addButton(_buttonFight);
 
@@ -87,7 +87,7 @@ namespace IntoTheNewWorld
             if (attacker == IntoTheNewWorld.Instance.players[0])
                 doNotFightText = "Cancel";
 
-            _buttonDoNotFight = new Button(new Rectangle(0, 0, 0, 0), doNotFightText, IntoTheNewWorld.Instance.miramonte, Color.Red, true);
+            _buttonDoNotFight = new Button(new Rectangle(0, 0, 0, 0), doNotFightText, _font, Color.Red, true);
             _buttonDoNotFight.Press += new EventHandler<PressEventArgs>(_buttonDoNotFight_Press);
             this.addButton(_buttonDoNotFight);
         }

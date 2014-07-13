@@ -374,8 +374,9 @@ namespace OSDC
             {
                 Vector2 v3MobScreen = worldToScreen(mob.positionWorld);
                 string text = mob.text;
-                Vector2 v2Text = OSDC.Instance.miramonte.MeasureString(text);
-                spriteBatch.DrawString(OSDC.Instance.miramonte, text, new Vector2(v3MobScreen.X - (v2Text.X / 2), v3MobScreen.Y - (v2Text.Y / 2)), Color.CornflowerBlue);
+                SpriteFont font = (SpriteFont)FontManager.Instance.getFont("Roboto");
+                Vector2 v2Text = font.MeasureString(text);
+                spriteBatch.DrawString(font, text, new Vector2(v3MobScreen.X - (v2Text.X / 2), v3MobScreen.Y - (v2Text.Y / 2)), Color.CornflowerBlue);
             }
             spriteBatch.End();
 
