@@ -673,7 +673,7 @@ namespace IntoTheNewWorld
             //explorers.Add(new Explorer("Jean", _map.gridToWorld(getLandTile(tiles, this.rnd)), speed));
 
             cities = new List<City>();
-            int numCities = 50;
+            int numCities = (int)((float)_map.width * (float)_map.height * 0.20 * 0.01); // TODO:AA: Was 50.
             for (int i = 0; i < numCities; i++)
             {
                 Vector2 v2GPos = getLandTile(tiles, this.rnd);
@@ -735,8 +735,8 @@ namespace IntoTheNewWorld
         {
             mapWindow = new IntoTheNewWorldMapWindow(_map, this.rectTileSafeArea, _tilesizeA, this.players[0].positionWorld);
             mapWindow.scrollSpeed = 10;
-            mapWindow.allowScaling = true;
-            mapWindow.allowRotation = true;
+            mapWindow.allowScaling = false; // TODO:AA: Was true.
+            mapWindow.allowRotation = false; // TODO:AA: Was true.
             mapWindow.scaleMin = 0.1f;
             mapWindow.scaleMax = 3.0f;
             mapWindow.drawGrid = false;
