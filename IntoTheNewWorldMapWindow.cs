@@ -741,7 +741,7 @@ namespace IntoTheNewWorld
 
                 int textCenter = iconLeftX + (fIcon.bounds.Width / 2);
                 string sIcon = "";
-                if (icons[i] == "recongition")
+                if (icons[i] == "recognition")
                     sIcon += IntoTheNewWorld.Instance.players[0].state.getValue<int>("recognition");
                 else if (icons[i] == "discovery")
                     sIcon += IntoTheNewWorld.Instance.players[0].state.getValue<int>("discovery");

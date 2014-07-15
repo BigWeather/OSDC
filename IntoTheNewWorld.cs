@@ -236,7 +236,18 @@ namespace IntoTheNewWorld
             this.dictGraphics["forest"].animations.AddRange(getVisibleAndDensityAnimations(1, 6, hexTile, hexAnchor, med, high, new Condition[] { new Condition("season", VariableType.String, Operation.Equals, new string[] { "fall" }.ToList()) }.ToList()));
             this.dictGraphics["forest"].animations.AddRange(getVisibleAndDensityAnimations(5, 8, hexTile, hexAnchor, med, high, new Condition[] { new Condition("season", VariableType.String, Operation.Equals, new string[] { "winter" }.ToList()) }.ToList()));
             this.dictGraphics["forest"].animations.AddRange(getVisibleAndDensityAnimations(6, 8, hexTile, hexAnchor, med, high, new Condition[] { new Condition("season", VariableType.String, Operation.Equals, new string[] { "spring" }.ToList()) }.ToList()));
+#if true
             addGraphic(new Graphic("ocean", "ItNW_Terrain", getVisibleAndDensityAnimations(2, 0, hexTile, hexAnchor, med, high)));
+#else
+            //addGraphic(new Graphic("ice_cap", "ItNW_Terrain", getVisibleAndDensityAnimations(5, 6, hexTile, hexAnchor, 0, 0, new Condition[] { new Condition("season", VariableType.String, Operation.Equals, new string[] { "winter" }.ToList()) }.ToList())));
+            Condition conditionSeason = new Condition("season", VariableType.String, Operation.Equals, "winter");
+            Condition conditionVisible = new Condition("visible", VariableType.Integer, Operation.Equals, "1");
+            Condition conditionNotVisible = new Condition("visible", VariableType.Integer, Operation.Equals, "0");
+            Animation icecapNV = new Animation(new Condition[] { conditionSeason, conditionNotVisible }.ToList(), Animation.Behavior.Static, new Frame(5, 6, hexTile, hexAnchor, int.MaxValue));
+            Animation icecapV = new Animation(new Condition[] { conditionSeason, conditionVisible }.ToList(), Animation.Behavior.Static, new Frame(5, 7, hexTile, hexAnchor, int.MaxValue));
+            addGraphic(new Graphic("ocean", "ItNW_Terrain", new Animation[] { icecapV, icecapNV }.ToList()));
+            this.dictGraphics["ocean"].animations.AddRange(getVisibleAndDensityAnimations(2, 0, hexTile, hexAnchor, med, high));
+#endif
             addGraphic(new Graphic("desert", "ItNW_Terrain", getVisibleAndDensityAnimations(2, 6, hexTile, hexAnchor, med, high)));
             addGraphic(new Graphic("mountains", "ItNW_Terrain", getVisibleAndDensityAnimations(0, 6, hexTile, hexAnchor, med, high)));
             addGraphic(new Graphic("hills", "ItNW_Terrain", getVisibleAndDensityAnimations(6, 0, hexTile, hexAnchor, med, high)));
